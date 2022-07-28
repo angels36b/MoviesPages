@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
-
+import  'bootstrap/dist/css/bootstrap.min.css' ;
 //components
 // import Movies from "./Movies";
 
@@ -28,6 +28,8 @@ function App() {
         data[espisode.season] = [...data[espisode.season], espisode.name]
       } else data[espisode.season] = [espisode.name]
     }
+    
+
     console.log(data)
     return data
   }
@@ -50,7 +52,7 @@ function App() {
           <button className="btn btn-primary"> Buscar </button>
         </div>
       </form>
-      <div >
+      <div className="card" style="width: 18rem">
         {movies.map((x, key) => <div key={`movie-${key}`}>
           <div onClick={(() => getEpisodes(x.show.id))} >
             <img src={x.show.image?.original} />
