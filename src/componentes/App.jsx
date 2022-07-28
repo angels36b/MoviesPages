@@ -10,21 +10,13 @@ function App() {
   const [busqueda, setBusqueda] = useState("");
 
   const datos = (e) => {
-    e.preventDault; //evita que se recargue la pagina
+    e.preventDefault(); //evita que se recargue la pagina
     //metodo de get
-    fetch(
-        `https://api.tvmaze.com/search/shows?q=${busqueda}`
-      ).then((response) => response.json());
-      
-      setMovies(response);
-    };
-
-
- 
-  const cambiarState = (e) => {
-    setBusqueda(e.target.value);
-    console.log(e.target.value);
+    fetch(`https://api.tvmaze.com/search/shows?q=${busqueda}`)
+    .then((response) => response.json()).then(setMovies)
   };
+
+  const cambiarState = (e) => setBusqueda(e.target.value)
 
   return (
     <section className="container">
@@ -37,10 +29,17 @@ function App() {
             className="form-control"
             placeholder="Que serie desea buscar?"
             name="buscador"
+            required
           />
           <button className="btn btn-primary"> Buscar </button>
         </div>
       </form>
+      <div>
+        {movies.map((x, key) => <div key={`movie-${key}`}>
+          <img src={x.show.image?.original} />
+          <div>{x.show.name}</div>
+        </div>)}
+      </div>
     </section>
   );
 }
