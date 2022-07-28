@@ -8,7 +8,7 @@ import { useState } from "react";
 function App() {
   const [movies, setMovies] = useState([]);
   const [busqueda, setBusqueda] = useState("");
-  const [seassons, setSeassons] = useState([])
+  const [seassons, setSeassons] = useState({})
 
   const service = 'https://api.tvmaze.com'
 
@@ -16,20 +16,21 @@ function App() {
     e.preventDefault(); //evita que se recargue la pagina
     //metodo de get
     const data = await fetch(`${service}/search/shows?q=${busqueda}`)
-    .then((response) => response.json())
+      .then((response) => response.json())
     setMovies(data)
   };
 
   const getEpisodes = async (movieId) => {
-    const seasons = await fetch(`${service}/shows/${movieId}/episodes`).then(r => r.json())
-    let data = []
-    for (const espisode of seasons) {
-      if (data[espisode.season]) {
-        data[espisode.season] = [...data[espisode.season], espisode.name]
-      } else data[espisode.season] = [espisode.name]
+    if (!seassons[movieId]) {
+      const espisodes = await fetch(`${service}/shows/${movieId}/episodes`).then(r => r.json())
+      let data = []
+      for (const espisode of espisodes) {
+        if (data[espisode.season]) {
+          data[espisode.season] = [...data[espisode.season], espisode.name]
+        } else data[espisode.season] = [espisode.name]
+      }
+      setSeassons({...seassons, [movieId]: data})
     }
-    console.log(data)
-    return data
   }
 
   const cambiarState = (e) => setBusqueda(e.target.value)
@@ -55,6 +56,9 @@ function App() {
           <div onClick={(() => getEpisodes(x.show.id))} >
             <img src={x.show.image?.original} />
             <div>{x.show.name}</div>
+            <div>{seassons[x.show.id] ? seassons[x.show.id].map((episode, key) => <div key={`m-${x.show.id}-${key}`}>
+              {episode}
+            </div>) : <></>}</div>
           </div>
         </div>)}
       </div>
